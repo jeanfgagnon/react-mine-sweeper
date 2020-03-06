@@ -1,10 +1,18 @@
 import React from 'react';
 
-export default class GameCell extends React.Component {
+import CellModel from '../Common/CellModel';
+
+import './GameCell.css';
+
+type Props = {
+  cellModel: CellModel;
+};
+
+export default class GameCell extends React.Component<Props> {
 
   render() {
     return (
-      <div>1</div>
+      <div className={'game-cell ' + this.props.cellModel.CssClass}>.</div>
     );
   }
 }

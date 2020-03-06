@@ -1,0 +1,23 @@
+.game-cell {
+  font-size: 15pt;
+  font-weight: bold;
+  font-family: Arial;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 25px;
+  width: 25px;
+  color: blue;
+  border: 0px;
+  margin: 0;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+
+.flag-img {
+  height: 14px;
+}
+
+.cellUnclick {
+  background-image: url('/Assets/game-cell.png');
+}

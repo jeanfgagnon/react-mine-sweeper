@@ -1,0 +1,25 @@
+
+.cellEmpty {
+  background-color: #a3a3a3;
+}
+
+.cellBomb {
+  background-image: url(../assets/bomb-cell.png);
+  background-color: #a3a3a3;
+  background-position: center center;
+  background-size: 16px;
+}
+
+.badCellBomb {
+  background-image: url(../assets/bad-bomb-cell.png);
+  background-color: #a3a3a3;
+  background-position: center center;
+  background-size: 16px;
+}
+
+.cellBombCur {
+  background-image: url(../assets/bomb-cell.png);
+  background-color: red;
+  background-position: center center;
+  background-size: 16px;
+}
