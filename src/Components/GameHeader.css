@@ -1,0 +1,23 @@
+#game-header {
+  font-size: 9pt;
+  font-family: Arial;
+  border-bottom: solid 2px black;
+}
+
+ .interieur {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  justify-content: space-between;
+  padding: 5px;
+  box-sizing: border-box;
+  font-size: 11pt;
+  color: black;
+}
+
+.start-pos {
+  justify-self: start;
+}
+
+.end-pos {
+  justify-self: end;
+}
