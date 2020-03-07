@@ -5,6 +5,8 @@ import GameCell from './GameCell';
 import GameOption from '../Common/GameOption';
 import CellModel from '../Common/CellModel';
 
+import './GameBoard.css';
+
 type Props = {
   gameOption: GameOption
 };
@@ -16,6 +18,7 @@ export default class GameBoard extends React.Component<Props> {
   constructor(props: Props) {
     super(props);
     this.initBoard();
+    this.onCellClicked = this.onCellClicked.bind(this);
   }
 
   render() {
@@ -28,7 +31,7 @@ export default class GameBoard extends React.Component<Props> {
               <tr key={tr_i}>  
                 {Array.from(Array(this.props.gameOption.NbCol)).map((a, td_i) => 
                     <td key={td_i}>
-                      <GameCell cellModel={this.getCell(tr_i, td_i)}></GameCell>
+                      <GameCell OnClick={this.onCellClicked} cellModel={this.getCell(tr_i, td_i)}></GameCell>
                     </td>
                 )}
               </tr>
@@ -42,12 +45,14 @@ export default class GameBoard extends React.Component<Props> {
 
   // event handlers
 
+  onCellClicked(e: Event, index: number): void {
+    console.log('Cell clicked #%s', index);
+  }
   // helpers
   
   // return cell base on coordinates
   private getCell(rowNo: number, colNo: number): CellModel {
     const index = (rowNo * this.props.gameOption.NbCol) + colNo;
-    console.log('index %s', index);
     return this.board[index];
   }
 
@@ -64,7 +69,6 @@ export default class GameBoard extends React.Component<Props> {
         index++;
       }
     }
-    console.log('board size %s', index);
   } // initBoard
 
    // create and initialize one board cell
@@ -83,4 +87,5 @@ export default class GameBoard extends React.Component<Props> {
   } // createCellModel
 
   // properties
+
 }

@@ -19,5 +19,6 @@
 }
 
 .cellUnclick {
-  background-image: url('/Assets/game-cell.png');
+  background-image: url('../Assets/game-cell.png');
+  background-size: cover;
 }

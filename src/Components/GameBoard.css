@@ -1,24 +1,38 @@
+#game-board {
+  box-sizing: border-box;
+  padding: 15px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table, th, td {
+  border: 1px solid black;
+  padding: 0;
+}
 
 .cellEmpty {
   background-color: #a3a3a3;
 }
 
 .cellBomb {
-  background-image: url(../assets/bomb-cell.png);
+  background-image: url(../Assets/bomb-cell.png);
   background-color: #a3a3a3;
   background-position: center center;
   background-size: 16px;
 }
 
 .badCellBomb {
-  background-image: url(../assets/bad-bomb-cell.png);
+  background-image: url(../Assets/bad-bomb-cell.png);
   background-color: #a3a3a3;
   background-position: center center;
   background-size: 16px;
 }
 
 .cellBombCur {
-  background-image: url(../assets/bomb-cell.png);
+  background-image: url(../Assets/bomb-cell.png);
   background-color: red;
   background-position: center center;
   background-size: 16px;
