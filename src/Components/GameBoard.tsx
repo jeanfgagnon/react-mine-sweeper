@@ -18,6 +18,7 @@ export default class GameBoard extends React.Component<Props> {
   constructor(props: Props) {
     super(props);
     this.initBoard();
+    this.state = { board: this.board };
     this.onCellClicked = this.onCellClicked.bind(this);
   }
 
@@ -56,9 +57,10 @@ export default class GameBoard extends React.Component<Props> {
   onCellRightClicked = (e: Event, index: number) => {
     const cellModel = this.board[index];
     //if (this.$store.state.Run && !cellModel.IsCleared) {
-      cellModel.IsRedFlagVisible = !cellModel.IsRedFlagVisible;
-      this.board[index] = JSON.parse(JSON.stringify(cellModel));
-      console.log('ostie de tabarnak %s', JSON.stringify(this.board[index]));
+    cellModel.IsRedFlagVisible = !cellModel.IsRedFlagVisible;
+    this.board[index] = JSON.parse(JSON.stringify(cellModel));
+    this.setState({ board : this.board });
+    console.log('ostie de tabarnak %s', JSON.stringify(this.board[index]));
       //  this.$store.dispatch('incrementNbFlagged', (cellModel.IsRedFlagVisible ? 1 : -1));
     //}
   }

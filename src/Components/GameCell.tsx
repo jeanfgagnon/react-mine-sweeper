@@ -4,6 +4,8 @@ import CellModel from '../Common/CellModel';
 
 import './GameCell.css';
 
+import flagImage from "../Assets/flag-cell.png";
+
 type Props = {
   cellModel: CellModel;
   OnClick: (e: Event, index: number) => void;  
@@ -40,8 +42,8 @@ export default class GameCell extends Component<Props> {
 
   cellContent = (): ReactElement => {
     if (this.props.cellModel.IsRedFlagVisible) {
-      return <img src='../Assets/flag-cell.png' className='flag-img' alt='Flag' />
+      return <img src={flagImage} className='flag-img' alt='Flag' />
     }
-    return <span>{this.props.cellModel.Text}.</span>
+    return <span>{this.props.cellModel.Text}</span>
   }
 }
