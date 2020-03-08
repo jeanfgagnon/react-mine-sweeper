@@ -4,7 +4,8 @@ import GameOption from '../Common/GameOption';
 import './GameHeader.css';
 
 type Props = {
-  gameOption: GameOption
+  gameOption: GameOption,
+  elapsed: number
 };
 
 export default class GameHeader extends React.Component<Props> {
@@ -23,6 +24,7 @@ export default class GameHeader extends React.Component<Props> {
             Gear spot
           </div>
         </div>
+        {this.props.elapsed}
       </div>
     );
   }

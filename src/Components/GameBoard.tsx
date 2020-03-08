@@ -8,17 +8,23 @@ import CellModel from '../Common/CellModel';
 import './GameBoard.css';
 
 type Props = {
-  gameOption: GameOption
+  gameOption: GameOption,
+  OnFirstClick: () => void;
 };
 
-export default class GameBoard extends React.Component<Props> {
+type State = {
+  board: CellModel[],
+  running: boolean
+};
+
+export default class GameBoard extends React.Component<Props, State> {
 
   private board: CellModel[] = [];
 
   constructor(props: Props) {
     super(props);
     this.initBoard();
-    this.state = { board: this.board };
+    this.state = { board: this.board, running: false };
     this.onCellClicked = this.onCellClicked.bind(this);
   }
 
@@ -51,6 +57,10 @@ export default class GameBoard extends React.Component<Props> {
   // event handlers
 
   onCellClicked = (e: Event, index: number) => {
+    if (!this.state.running) {
+      this.setState({ running: true });
+      this.props.OnFirstClick();
+    }
     console.log('arrow %s', index);
   }
 
@@ -102,6 +112,13 @@ export default class GameBoard extends React.Component<Props> {
 
     return cell;
   } // createCellModel
+
+  // return a random where n >= 0 && n < board size
+  private getRandomPos(): number {
+    const rnd = Math.floor(Math.random() * this.board.length);
+
+    return rnd;
+  }
 
   // properties
 
