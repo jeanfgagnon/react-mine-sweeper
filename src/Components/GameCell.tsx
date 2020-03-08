@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component, MouseEvent, ReactElement } from 'react';
 
 import CellModel from '../Common/CellModel';
 
@@ -7,24 +7,41 @@ import './GameCell.css';
 type Props = {
   cellModel: CellModel;
   OnClick: (e: Event, index: number) => void;  
+  OnRightClick: (e: Event, index: number) => void;  
 };
 
-export default class GameCell extends React.Component<Props> {
+export default class GameCell extends Component<Props> {
 
   constructor(props: Props) {
     super(props);
     this.handleClick = this.handleClick.bind(this);
   }
+
   render() {
     return (
-      <div onClick={this.handleClick} className={'game-cell ' + this.props.cellModel.CssClass}></div>
+      <div onClick={this.handleClick} onContextMenu={this.handleClick} className={'game-cell ' + this.props.cellModel.CssClass}>{this.cellContent()}</div>
     );
   }
 
   // event handlers
 
-  handleClick(e: React.MouseEvent<HTMLElement>): void {
+  handleClick(e: MouseEvent<HTMLElement>): void {
     e.preventDefault();
-    this.props.OnClick(e.nativeEvent, this.props.cellModel.CellNo);
+    if (e.type === 'click') {
+      this.props.OnClick(e.nativeEvent, this.props.cellModel.CellNo);
+    }
+    else { 
+      this.props.OnRightClick(e.nativeEvent, this.props.cellModel.CellNo);
+    }
+  }
+
+
+  // helpers
+
+  cellContent = (): ReactElement => {
+    if (this.props.cellModel.IsRedFlagVisible) {
+      return <img src='../Assets/flag-cell.png' className='flag-img' alt='Flag' />
+    }
+    return <span>{this.props.cellModel.Text}.</span>
   }
 }

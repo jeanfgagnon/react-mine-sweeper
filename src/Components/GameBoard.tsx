@@ -31,7 +31,11 @@ export default class GameBoard extends React.Component<Props> {
               <tr key={tr_i}>  
                 {Array.from(Array(this.props.gameOption.NbCol)).map((a, td_i) => 
                     <td key={td_i}>
-                      <GameCell OnClick={this.onCellClicked} cellModel={this.getCell(tr_i, td_i)}></GameCell>
+                      <GameCell 
+                          key={`${tr_i}_${td_i}`}
+                          OnRightClick={this.onCellRightClicked} 
+                          OnClick={this.onCellClicked} 
+                          cellModel={this.getCell(tr_i, td_i)}></GameCell>
                     </td>
                 )}
               </tr>
@@ -45,12 +49,23 @@ export default class GameBoard extends React.Component<Props> {
 
   // event handlers
 
-  onCellClicked(e: Event, index: number): void {
-    console.log('Cell clicked #%s', index);
+  onCellClicked = (e: Event, index: number) => {
+    console.log('arrow %s', index);
   }
+
+  onCellRightClicked = (e: Event, index: number) => {
+    const cellModel = this.board[index];
+    //if (this.$store.state.Run && !cellModel.IsCleared) {
+      cellModel.IsRedFlagVisible = !cellModel.IsRedFlagVisible;
+      this.board[index] = JSON.parse(JSON.stringify(cellModel));
+      console.log('ostie de tabarnak %s', JSON.stringify(this.board[index]));
+      //  this.$store.dispatch('incrementNbFlagged', (cellModel.IsRedFlagVisible ? 1 : -1));
+    //}
+  }
+
   // helpers
   
-  // return cell base on coordinates
+  // return cell based on coordinates
   private getCell(rowNo: number, colNo: number): CellModel {
     const index = (rowNo * this.props.gameOption.NbCol) + colNo;
     return this.board[index];
