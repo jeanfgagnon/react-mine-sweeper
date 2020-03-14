@@ -13,7 +13,8 @@ type Props = {
 };
 
 type State = {
-  elapsed: number
+  elapsed: number,
+  flagCount: number
 };
 
 export default class GameForm extends React.Component<Props, State> {
@@ -22,9 +23,11 @@ export default class GameForm extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = { 
-      elapsed: 0 
+      elapsed: 0,
+      flagCount: 0 
     };
     this.startGame = this.startGame.bind(this);
+    this.setFlagCount = this.setFlagCount.bind(this);
   }
 
   componentDidMount(): void {
@@ -39,8 +42,8 @@ export default class GameForm extends React.Component<Props, State> {
     return (
     <div> 
       <div id='divGameForm' style={{width: (this.props.gameOption.NbCol * 27 + 10)}}>
-        <GameHeader gameOption={this.props.gameOption} elapsed={this.state.elapsed} />
-        <GameBoard gameOption={this.props.gameOption} OnFirstClick={this.startGame} />
+        <GameHeader gameOption={this.props.gameOption} elapsed={this.state.elapsed} flagCount={this.state.flagCount} />
+        <GameBoard gameOption={this.props.gameOption} SetFlagCount={this.setFlagCount} OnFirstClick={this.startGame} />
       </div>
       
       <div id="divConfigPanel" className='gf-hidden'>
@@ -59,8 +62,14 @@ export default class GameForm extends React.Component<Props, State> {
     this.timerHandle = setInterval(() => this.incrementElapsed(), 1000); 
   }
 
+  setFlagCount = (nb: number): void => {
+    this.setState({ flagCount: nb});
+  }
+
   incrementElapsed(): void {
-    this.setState({ elapsed: this.state.elapsed + 1 });
+    this.setState(prevState => {
+      return { elapsed: prevState.elapsed + 1 };
+   });
   }
 
 } // component

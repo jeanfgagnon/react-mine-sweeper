@@ -5,7 +5,8 @@ import './GameHeader.css';
 
 type Props = {
   gameOption: GameOption,
-  elapsed: number
+  elapsed: number, 
+  flagCount: number
 };
 
 export default class GameHeader extends React.Component<Props> {
@@ -24,7 +25,8 @@ export default class GameHeader extends React.Component<Props> {
             Gear spot
           </div>
         </div>
-        {this.props.elapsed}
+        Remaining: { this.props.gameOption.NbBomb - this.props.flagCount} &nbsp;
+        Elapsed: {this.props.elapsed}
       </div>
     );
   }
