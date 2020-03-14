@@ -6,5 +6,5 @@ export default class CellModel {
   public IsCleared = false;
   public Text = '';
   public CssClass = '';
-  public Style = '';
+  public CellStyle = {};
 }

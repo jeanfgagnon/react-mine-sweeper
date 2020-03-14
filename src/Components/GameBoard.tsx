@@ -12,6 +12,7 @@ type Props = {
   gameOption: GameOption,
   OnFirstClick: () => void,
   SetFlagCount: (nb: number) => void;
+  OnBoom: () => void
 };
 
 type State = {
@@ -67,6 +68,8 @@ export default class GameBoard extends React.Component<Props, State> {
     }
     if (this.board[index].IsBomb) {
       // boom
+      console.log('boom!');
+      this.boom(index);
     }
     else {
       this.board[index].IsRedFlagVisible = false;
@@ -76,12 +79,13 @@ export default class GameBoard extends React.Component<Props, State> {
       const nearBombCount = this.getNearBombCount(coords);
       if (nearBombCount > 0) {
         this.board[index].Text = nearBombCount.toString();
-        this.board[index].Style = this.getStyleColorByNbBomb(nearBombCount);
+        this.board[index].CellStyle = this.getStyleColorByNbBomb(nearBombCount);
       }
       else {
         this.clearEmptyAround(coords);
       }
-
+      //this.forceUpdate();
+      this.setState({ board: this.board });
     }
     console.log('arrow %s', index);
   }
@@ -93,7 +97,6 @@ export default class GameBoard extends React.Component<Props, State> {
       this.board[index] = JSON.parse(JSON.stringify(cellModel));
       this.setState({ board: this.board });
       const nb = this.board.filter(x => x.IsRedFlagVisible).length;
-      console.log("Nombre de flagged %s", nb);
       this.props.SetFlagCount(nb);
     }
   }
@@ -117,7 +120,7 @@ export default class GameBoard extends React.Component<Props, State> {
   getNearBombCount(coords: CellCoords): number {
     let nbBomb = 0;
     const surroundingBoardPos: number[] = this.computeSurroundingBoardPos(coords);
-    surroundingBoardPos.map(n => {
+    surroundingBoardPos.forEach(n => {
       if (this.board[n].IsBomb) {
         nbBomb++;
       }
@@ -134,10 +137,10 @@ export default class GameBoard extends React.Component<Props, State> {
     const nearBombCount = this.getNearBombCount(coords);
     if (nearBombCount > 0) {
       this.board[pos].Text = nearBombCount.toString();
-      this.board[pos].Style = this.getStyleColorByNbBomb(nearBombCount);
+      this.board[pos].CellStyle = this.getStyleColorByNbBomb(nearBombCount);
     }
     else {
-      this.azimuth.map(aziStr => {
+      this.azimuth.forEach(aziStr => {
         const aziCoords: CellCoords = this.getAziCoords(coords, aziStr);
         if (aziCoords.valid) {
           const aziPos = this.getBoardPos(aziCoords);
@@ -156,10 +159,12 @@ export default class GameBoard extends React.Component<Props, State> {
     this.azimuth.forEach(aziStr => {
 
       const aziCoords: CellCoords = this.getAziCoords(coords, aziStr);
+      
       if (aziCoords.valid) {
         const curPos = this.getBoardPos(aziCoords);
         if (this.board[curPos].IsBomb) {
           this.board[curPos].IsBomb = false;
+      
           let pos = this.getRandomPos();
           while (pos === firstClickedCellNo || surroundingBoardPos.indexOf(pos) !== -1 || this.board[pos].IsBomb) {
             pos = this.getRandomPos();
@@ -244,6 +249,31 @@ export default class GameBoard extends React.Component<Props, State> {
     return newCoords;
   }
 
+  boom(currentCellNo: number): void {
+    let nb = this.board.filter(x => x.IsRedFlagVisible).length;
+
+    for (let i = 0; i < this.board.length; i++) {
+      if (this.board[i].IsBomb) {
+        if (i === currentCellNo) {
+          this.board[i].CssClass = "cellBombCur";
+        }
+        else {
+          if (!this.board[i].IsRedFlagVisible) {
+            this.board[i].CssClass = "cellBomb";
+          }
+        }
+      }
+      else if (this.board[i].IsRedFlagVisible) {
+        this.board[i].IsRedFlagVisible = false;
+        this.board[i].CssClass = "badCellBomb";
+        nb--;
+      }
+    }
+
+    this.props.SetFlagCount(nb);
+    this.props.OnBoom();
+  }
+  
   // get the board position by cell coord
   getBoardPos(coords: CellCoords): number {
     const rv = ((coords.RowPos - 1) * this.props.gameOption.NbCol) + (coords.ColPos - 1);
@@ -288,18 +318,18 @@ export default class GameBoard extends React.Component<Props, State> {
   }
 
   // select text color by bomb count
-  getStyleColorByNbBomb(nbBomb: number): string {
-    let rv = '';
+  getStyleColorByNbBomb(nbBomb: number): object {
+    let rv = {};
 
     switch (nbBomb) {
-      case 1: rv = 'color: blue'; break;
-      case 2: rv = 'color: green'; break;
-      case 3: rv = 'color: red'; break;
-      case 4: rv = 'color: indigo'; break;
-      case 5: rv = 'color: magenta'; break;
-      case 6: rv = 'color: maroon'; break;
-      case 7: rv = 'color: orangered'; break;
-      case 8: rv = 'color: purple'; break;
+      case 1: rv = {color: 'blue'}; break;
+      case 2: rv = {color: 'green'}; break;
+      case 3: rv = {color: 'red'}; break;
+      case 4: rv = {color: 'indigo'}; break;
+      case 5: rv = {color: 'magenta'}; break;
+      case 6: rv = {color: 'maroon'}; break;
+      case 7: rv = {color: 'orangered'}; break;
+      case 8: rv = {color: 'purple'}; break;
     }
 
     return rv;

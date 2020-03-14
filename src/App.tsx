@@ -9,7 +9,7 @@ function App() {
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <GameForm gameOption={{'NbRow':16,'NbCol':30,'NbBomb':99}}></GameForm>
+        <GameForm gameOption={{'NbRow':16,'NbCol':30,'NbBomb':99, 'MaxSec':999}}></GameForm>
       </header>
     </div>
   );

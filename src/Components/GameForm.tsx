@@ -13,7 +13,8 @@ type Props = {
 };
 
 type State = {
-  elapsed: number,
+  gameOver: boolean,
+  running: boolean,
   flagCount: number
 };
 
@@ -23,11 +24,12 @@ export default class GameForm extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = { 
-      elapsed: 0,
+      gameOver: false,
+      running: false,
       flagCount: 0 
     };
-    this.startGame = this.startGame.bind(this);
-    this.setFlagCount = this.setFlagCount.bind(this);
+    // this.startGame = this.startGame.bind(this);
+    // this.setFlagCount = this.setFlagCount.bind(this);
   }
 
   componentDidMount(): void {
@@ -35,15 +37,25 @@ export default class GameForm extends React.Component<Props, State> {
   }
   
   componentWillUnmount(): void {
-    clearInterval(this.timerHandle);
   }
 
   render() {
     return (
     <div> 
       <div id='divGameForm' style={{width: (this.props.gameOption.NbCol * 27 + 10)}}>
-        <GameHeader gameOption={this.props.gameOption} elapsed={this.state.elapsed} flagCount={this.state.flagCount} />
-        <GameBoard gameOption={this.props.gameOption} SetFlagCount={this.setFlagCount} OnFirstClick={this.startGame} />
+        <GameHeader 
+            gameOption={this.props.gameOption} 
+            running={this.state.running}
+            gameOver={this.state.gameOver}
+            OnTimeout={this.stopGame}
+            flagCount={this.state.flagCount} 
+        />
+        <GameBoard 
+            gameOption={this.props.gameOption} 
+            SetFlagCount={this.setFlagCount}
+            OnFirstClick={this.startGame}
+            OnBoom={this.onBoom}
+        />
       </div>
       
       <div id="divConfigPanel" className='gf-hidden'>
@@ -56,20 +68,21 @@ export default class GameForm extends React.Component<Props, State> {
 
   // event handlers
 
-  startGame(): void {
-    // start timer 
-    this.setState({ elapsed: 0 });
-    this.timerHandle = setInterval(() => this.incrementElapsed(), 1000); 
+  // we exploded ourself 
+  private onBoom = (): void => {
+    this.setState({ running: false, gameOver: true});
   }
 
-  setFlagCount = (nb: number): void => {
+  private startGame = (): void => {
+    this.setState({ running: true });
+  }
+
+  private stopGame = (): void => {
+    this.setState({ running: false });
+  }
+
+  private setFlagCount = (nb: number): void => {
     this.setState({ flagCount: nb});
-  }
-
-  incrementElapsed(): void {
-    this.setState(prevState => {
-      return { elapsed: prevState.elapsed + 1 };
-   });
   }
 
 } // component

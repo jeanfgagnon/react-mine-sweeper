@@ -1,3 +1,10 @@
+@font-face {
+  font-family: 'DS-Digital Bold';
+  font-style: normal;
+  font-weight: normal;
+  src: local('DS-Digital Bold'), url('../Assets/DS-DIGIB.woff') format('woff');
+}
+
 #game-header {
   font-size: 9pt;
   font-family: Arial;
@@ -14,6 +21,36 @@
   color: black;
 }
 
+.container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  justify-items: center;
+  justify-content: space-between;
+}
+
+.digit-box {
+  font-family: 'DS-Digital Bold';
+  font-weight: normal;
+  font-weight: normal;
+  font-size: 42px;
+  color: red;
+  width: 65px;
+  height: 35px;
+  background: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 20px;
+  margin-left: 20px;
+  margin-bottom: 5px;
+}
+
+.smiley-button {
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  background-color: #a3a3a3;
+}
 .start-pos {
   justify-self: start;
 }

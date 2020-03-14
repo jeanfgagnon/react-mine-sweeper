@@ -14,6 +14,8 @@ type Props = {
 
 export default class GameCell extends Component<Props> {
 
+  // life cycle plumbing  
+
   constructor(props: Props) {
     super(props);
     this.handleClick = this.handleClick.bind(this);
@@ -21,8 +23,15 @@ export default class GameCell extends Component<Props> {
 
   render() {
     return (
-      <div onClick={this.handleClick} onContextMenu={this.handleClick} className={'game-cell ' + this.props.cellModel.CssClass}>{this.cellContent()}</div>
+      <div onClick={this.handleClick} 
+           onContextMenu={this.handleClick} 
+           style={this.props.cellModel.CellStyle}
+           className={'game-cell ' + this.props.cellModel.CssClass}
+      >{this.cellContent()}</div>
     );
+  }
+
+  componentDidUpdate() {
   }
 
   // event handlers
@@ -36,7 +45,6 @@ export default class GameCell extends Component<Props> {
       this.props.OnRightClick(e.nativeEvent, this.props.cellModel.CellNo);
     }
   }
-
 
   // helpers
 
