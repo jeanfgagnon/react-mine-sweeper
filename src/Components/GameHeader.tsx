@@ -46,11 +46,11 @@ export default class GameHeader extends React.Component<Props, State> {
         </div>
 
         <div className="container">
-          <div className="start-pos"><div className="digit-box">{this.props.gameOption.NbBomb - this.props.flagCount}</div></div>
+          <div className="start-pos"><div className="digit-box">{this.padNum(this.props.gameOption.NbBomb - this.props.flagCount)}</div></div>
           <div>
             <div className='smiley-button' onClick={this.restart}>{this.getSmileyEL()}</div>
           </div>
-          <div className="end-pos"><div className="digit-box">{this.state.elapsed}</div></div>
+          <div className="end-pos"><div className="digit-box">{this.padNum(this.state.elapsed)}</div></div>
         </div>
 
       </div>
@@ -70,9 +70,12 @@ export default class GameHeader extends React.Component<Props, State> {
   }
 
   // event handlers
+
+  // Start another game (and possibly abort current one)
   private restart(): void {
-    // calme le render
+    clearInterval(this.timerHandler);
   }
+
   // helpers
 
   // private code
@@ -107,6 +110,21 @@ export default class GameHeader extends React.Component<Props, State> {
     else {
       return (<img id="img-smiley" src={smiley} alt='Smiley' />);
     }
+  }
+  
+  private padNum = (num: number): string => {
+    let rv;
+    if (num < 10) {
+      rv = '00' + num.toString();
+    }
+    else if (num < 100) {
+      rv = '0' + num.toString();
+    }
+    else { 
+      rv = num.toString();
+    }
+
+    return rv;
   }
 
 } // component
