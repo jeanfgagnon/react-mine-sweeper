@@ -15,7 +15,8 @@ type Props = {
 type State = {
   gameOver: boolean,
   running: boolean,
-  flagCount: number
+  flagCount: number,
+  restart: boolean
 };
 
 export default class GameForm extends React.Component<Props, State> {
@@ -26,7 +27,8 @@ export default class GameForm extends React.Component<Props, State> {
     this.state = { 
       gameOver: false,
       running: false,
-      flagCount: 0 
+      flagCount: 0,
+      restart: false 
     };
     // this.startGame = this.startGame.bind(this);
     // this.setFlagCount = this.setFlagCount.bind(this);
@@ -48,12 +50,14 @@ export default class GameForm extends React.Component<Props, State> {
             running={this.state.running}
             gameOver={this.state.gameOver}
             OnTimeout={this.stopGame}
+            OnRestart={this.restartGame}
             flagCount={this.state.flagCount} 
         />
         <GameBoard 
             gameOption={this.props.gameOption} 
             SetFlagCount={this.setFlagCount}
             OnFirstClick={this.startGame}
+            restart={this.state.restart}
             OnBoom={this.onBoom}
         />
       </div>
@@ -74,7 +78,7 @@ export default class GameForm extends React.Component<Props, State> {
   }
 
   private startGame = (): void => {
-    this.setState({ running: true });
+    this.setState({ running: true, restart: false });
   }
 
   private stopGame = (): void => {
@@ -85,4 +89,12 @@ export default class GameForm extends React.Component<Props, State> {
     this.setState({ flagCount: nb});
   }
 
+  private restartGame = (): void => {
+    this.setState({
+      gameOver: false,
+      running: false,
+      flagCount: 0,
+      restart: true
+    });
+  }
 } // component

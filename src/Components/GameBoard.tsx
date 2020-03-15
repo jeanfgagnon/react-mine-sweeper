@@ -12,7 +12,8 @@ type Props = {
   gameOption: GameOption,
   OnFirstClick: () => void,
   SetFlagCount: (nb: number) => void;
-  OnBoom: () => void
+  OnBoom: () => void,
+  restart: boolean
 };
 
 type State = {
@@ -24,6 +25,8 @@ export default class GameBoard extends React.Component<Props, State> {
 
   private board: CellModel[] = [];
   private azimuth = ['ne', 'n', 'nw', 'w', 'e', 'sw', 's', 'se'];
+
+    // life cycle plumbing
 
   constructor(props: Props) {
     super(props);
@@ -56,6 +59,13 @@ export default class GameBoard extends React.Component<Props, State> {
         </div>
       </div>
     );
+  }
+
+  componentDidUpdate() {
+    if (this.props.restart && this.state.running) {
+      this.initBoard();
+      this.setState({ running: false });
+    }    
   }
 
   // event handlers

@@ -11,7 +11,8 @@ type Props = {
   running: boolean,
   gameOver: boolean,
   flagCount: number,
-  OnTimeout: () => void
+  OnTimeout: () => void,
+  OnRestart: () => void
 };
 
 type State = {
@@ -48,7 +49,7 @@ export default class GameHeader extends React.Component<Props, State> {
         <div className="container">
           <div className="start-pos"><div className="digit-box">{this.padNum(this.props.gameOption.NbBomb - this.props.flagCount)}</div></div>
           <div>
-            <div className='smiley-button' onClick={this.restart}>{this.getSmileyEL()}</div>
+            <div className='smiley-button' title='Restart game' onClick={this.restart}>{this.getSmileyEL()}</div>
           </div>
           <div className="end-pos"><div className="digit-box">{this.padNum(this.state.elapsed)}</div></div>
         </div>
@@ -72,8 +73,11 @@ export default class GameHeader extends React.Component<Props, State> {
   // event handlers
 
   // Start another game (and possibly abort current one)
-  private restart(): void {
+  private restart = (): void => {
     clearInterval(this.timerHandler);
+    this.timerHandler = 0;
+    this.setState({ elapsed: 0 });
+    this.props.OnRestart();
   }
 
   // helpers
@@ -111,7 +115,7 @@ export default class GameHeader extends React.Component<Props, State> {
       return (<img id="img-smiley" src={smiley} alt='Smiley' />);
     }
   }
-  
+
   private padNum = (num: number): string => {
     let rv;
     if (num < 10) {
@@ -120,7 +124,7 @@ export default class GameHeader extends React.Component<Props, State> {
     else if (num < 100) {
       rv = '0' + num.toString();
     }
-    else { 
+    else {
       rv = num.toString();
     }
 
