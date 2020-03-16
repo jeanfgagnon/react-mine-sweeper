@@ -56,6 +56,7 @@ export default class GameForm extends React.Component<Props, State> {
         <GameBoard 
             gameOption={this.props.gameOption} 
             SetFlagCount={this.setFlagCount}
+            gameOver={this.state.gameOver}
             OnFirstClick={this.startGame}
             restart={this.state.restart}
             OnBoom={this.onBoom}

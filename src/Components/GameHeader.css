@@ -50,6 +50,20 @@
   margin: 0;
   background-color: #a3a3a3;
 }
+
+.gear-icon {
+  width: 24px;
+  height: 24px;
+  margin-right: 20px;
+  cursor: pointer;
+  background-image: url('../Assets/gear.png');
+  background-size: 24px;
+}
+
+.gear-icon:hover {
+  background-image: url('../Assets/gear-bold.png');
+}
+
 .start-pos {
   justify-self: start;
 }

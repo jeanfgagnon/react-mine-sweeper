@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { MouseEvent } from 'react';
 
 import GameCell from './GameCell';
 
@@ -13,7 +13,8 @@ type Props = {
   OnFirstClick: () => void,
   SetFlagCount: (nb: number) => void;
   OnBoom: () => void,
-  restart: boolean
+  restart: boolean,
+  gameOver: boolean
 };
 
 type State = {
@@ -26,7 +27,7 @@ export default class GameBoard extends React.Component<Props, State> {
   private board: CellModel[] = [];
   private azimuth = ['ne', 'n', 'nw', 'w', 'e', 'sw', 's', 'se'];
 
-    // life cycle plumbing
+  // life cycle plumbing
 
   constructor(props: Props) {
     super(props);
@@ -39,7 +40,7 @@ export default class GameBoard extends React.Component<Props, State> {
     return (
       <div id="game-board">
         <div className='game-grid'>
-          <table>
+          <table onContextMenu={(e: MouseEvent<HTMLElement>): void => { e.preventDefault(); }}>
             <tbody>
               {Array.from(Array(this.props.gameOption.NbRow)).map((tr, tr_i) =>
                 <tr key={tr_i}>
@@ -65,46 +66,47 @@ export default class GameBoard extends React.Component<Props, State> {
     if (this.props.restart && this.state.running) {
       this.initBoard();
       this.setState({ running: false });
-    }    
+    }
   }
 
   // event handlers
 
   onCellClicked = (e: Event, index: number) => {
-    if (!this.state.running) {
-      this.setState({ running: true });
-      this.props.OnFirstClick();
-      this.bombSetup(index);
-    }
-
-    if (!this.board[index].IsRedFlagVisible) {
-      if (this.board[index].IsBomb) {
-        // boom
-        console.log('boom!');
-        this.boom(index);
+    if (!this.props.gameOver) {
+      if (!this.state.running) {
+        this.setState({ running: true });
+        this.props.OnFirstClick();
+        this.bombSetup(index);
       }
-      else {
-        this.board[index].IsRedFlagVisible = false;
-        this.board[index].CssClass = "empty-cell";
-        this.board[index].IsCleared = true;
-        const coords = this.getCellCoord(this.board[index].CellNo);
-        const nearBombCount = this.getNearBombCount(coords);
-        if (nearBombCount > 0) {
-          this.board[index].Text = nearBombCount.toString();
-          this.board[index].CellStyle = this.getStyleColorByNbBomb(nearBombCount);
+
+      if (!this.board[index].IsRedFlagVisible) {
+        if (this.board[index].IsBomb) {
+          // boom
+          console.log('boom!');
+          this.boom(index);
         }
         else {
-          this.clearEmptyAround(coords);
+          this.board[index].IsRedFlagVisible = false;
+          this.board[index].CssClass = "empty-cell";
+          this.board[index].IsCleared = true;
+          const coords = this.getCellCoord(this.board[index].CellNo);
+          const nearBombCount = this.getNearBombCount(coords);
+          if (nearBombCount > 0) {
+            this.board[index].Text = nearBombCount.toString();
+            this.board[index].CellStyle = this.getStyleColorByNbBomb(nearBombCount);
+          }
+          else {
+            this.clearEmptyAround(coords);
+          }
+          this.setState({ board: this.board });
         }
-        //this.forceUpdate();
-        this.setState({ board: this.board });
       }
     }
   }
 
   onCellRightClicked = (e: Event, index: number) => {
     const cellModel = this.board[index];
-    if (this.state.running && !cellModel.IsCleared) {
+    if (this.state.running && !this.props.gameOver && !cellModel.IsCleared) {
       cellModel.IsRedFlagVisible = !cellModel.IsRedFlagVisible;
       this.board[index] = JSON.parse(JSON.stringify(cellModel));
       this.setState({ board: this.board });

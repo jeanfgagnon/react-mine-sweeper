@@ -5,6 +5,7 @@ import './GameHeader.css';
 
 import smiley from '../Assets/smiley-smile.png';
 import smileySad from '../Assets/smiley-sad.png';
+//import gear from '../Assets/gear.png';
 
 type Props = {
   gameOption: GameOption,
@@ -42,7 +43,8 @@ export default class GameHeader extends React.Component<Props, State> {
             Bombs: {this.props.gameOption.NbBomb} &nbsp;
           </div>
           <div className='end-pos'>
-            Gear spot
+            <div className='gear-icon'></div>            
+          
           </div>
         </div>
 
