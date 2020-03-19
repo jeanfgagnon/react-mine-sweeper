@@ -20,54 +20,68 @@ type State = {
 };
 
 export default class GameForm extends React.Component<Props, State> {
+  private gameFormRef: React.RefObject<HTMLDivElement>;
+  private configPanelRef: React.RefObject<HTMLDivElement>;
   private timerHandle: any = 0;
-  
+  private configStyle: object;
+
   constructor(props: Props) {
     super(props);
-    this.state = { 
+    this.state = {
       gameOver: false,
       running: false,
       flagCount: 0,
-      restart: false 
+      restart: false
     };
-    // this.startGame = this.startGame.bind(this);
-    // this.setFlagCount = this.setFlagCount.bind(this);
+    this.configStyle = {
+      display: 'none'
+    };
+    this.gameFormRef = React.createRef();
+    this.configPanelRef = React.createRef();
   }
 
-  componentDidMount(): void {
-
+  componentDidMount = (): void => {
+    if (this.gameFormRef.current) {
+      const gameFormRect: DOMRect = this.gameFormRef.current.getBoundingClientRect();
+      console.log('LE RECT %s', JSON.stringify(gameFormRect));
+      this.configStyle = {
+        top: (gameFormRect.top + 70) + 'px',
+        left: (gameFormRect.right /*- configPanelSize.width*/) + 'px'
+      }
+    }
   }
-  
+
   componentWillUnmount(): void {
   }
 
   render() {
     return (
-    <div> 
-      <div id='divGameForm' style={{width: (this.props.gameOption.NbCol * 27 + 10)}}>
-        <GameHeader 
-            gameOption={this.props.gameOption} 
+      <div>
+        <div id='divGameForm' ref={this.gameFormRef} style={{ width: (this.props.gameOption.NbCol * 27 + 10) }}>
+          <GameHeader
+            gameOption={this.props.gameOption}
             running={this.state.running}
             gameOver={this.state.gameOver}
             OnTimeout={this.stopGame}
             OnRestart={this.restartGame}
-            flagCount={this.state.flagCount} 
-        />
-        <GameBoard 
-            gameOption={this.props.gameOption} 
+            OnConfig={this.toggleConfig}
+            flagCount={this.state.flagCount}
+          />
+          <GameBoard
+            gameOption={this.props.gameOption}
             SetFlagCount={this.setFlagCount}
             gameOver={this.state.gameOver}
             OnFirstClick={this.startGame}
             restart={this.state.restart}
             OnBoom={this.onBoom}
-        />
+          />
+        </div>
+
+        <div id="divConfigPanel" style={this.configStyle}>
+          <GameConfig></GameConfig>
+        </div>
       </div>
-      
-      <div id="divConfigPanel" className='gf-hidden'>
-        <GameConfig></GameConfig>
-      </div>
-    </div>
-  );
+    );
 
   } // render
 
@@ -75,7 +89,7 @@ export default class GameForm extends React.Component<Props, State> {
 
   // we exploded ourself 
   private onBoom = (): void => {
-    this.setState({ running: false, gameOver: true});
+    this.setState({ running: false, gameOver: true });
   }
 
   private startGame = (): void => {
@@ -87,7 +101,7 @@ export default class GameForm extends React.Component<Props, State> {
   }
 
   private setFlagCount = (nb: number): void => {
-    this.setState({ flagCount: nb});
+    this.setState({ flagCount: nb });
   }
 
   private restartGame = (): void => {
@@ -98,4 +112,9 @@ export default class GameForm extends React.Component<Props, State> {
       restart: true
     });
   }
+
+  private toggleConfig = (): void => {
+    console.log('toggle-config-tabbb');
+  }
+  
 } // component

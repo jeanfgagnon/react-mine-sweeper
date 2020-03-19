@@ -13,7 +13,8 @@ type Props = {
   gameOver: boolean,
   flagCount: number,
   OnTimeout: () => void,
-  OnRestart: () => void
+  OnRestart: () => void,
+  OnConfig: () => void
 };
 
 type State = {
@@ -43,8 +44,7 @@ export default class GameHeader extends React.Component<Props, State> {
             Bombs: {this.props.gameOption.NbBomb} &nbsp;
           </div>
           <div className='end-pos'>
-            <div className='gear-icon'></div>            
-          
+            <div className='gear-icon' onClick={this.gearClicked}></div>          
           </div>
         </div>
 
@@ -74,6 +74,10 @@ export default class GameHeader extends React.Component<Props, State> {
 
   // event handlers
 
+  private gearClicked = (): void => { 
+    this.props.OnConfig();
+  }
+  
   // Start another game (and possibly abort current one)
   private restart = (): void => {
     clearInterval(this.timerHandler);
