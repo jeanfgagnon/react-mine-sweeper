@@ -1,0 +1,30 @@
+
+.gc-container {
+  box-sizing: border-box;
+  padding: 15px;
+}
+
+.gc-title {
+  text-align: center;
+  margin: 4px;
+}
+
+.gc-field {
+  margin-bottom: 8px;
+}
+
+.gc-label-zone {
+  font-size: 9pt;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+.gc-input {
+  font-size: 11pt;
+  border: none;
+  color: #252525;
+  background-color: white;
+  box-sizing: border-box;
+  padding: 2px 5px 2px 5px;
+  border-radius: 5px;
+  width: 100%;
+}

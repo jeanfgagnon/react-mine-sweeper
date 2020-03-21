@@ -16,14 +16,15 @@ type State = {
   gameOver: boolean,
   running: boolean,
   flagCount: number,
-  restart: boolean
+  restart: boolean,
+  configVis: boolean;
 };
 
 export default class GameForm extends React.Component<Props, State> {
   private gameFormRef: React.RefObject<HTMLDivElement>;
   private configPanelRef: React.RefObject<HTMLDivElement>;
-  private timerHandle: any = 0;
-  private configStyle: object;
+
+  // life cycle plumbing
 
   constructor(props: Props) {
     super(props);
@@ -31,24 +32,16 @@ export default class GameForm extends React.Component<Props, State> {
       gameOver: false,
       running: false,
       flagCount: 0,
-      restart: false
+      restart: false,
+      configVis: false,
     };
-    this.configStyle = {
-      display: 'none'
-    };
+
     this.gameFormRef = React.createRef();
     this.configPanelRef = React.createRef();
   }
 
   componentDidMount = (): void => {
-    if (this.gameFormRef.current) {
-      const gameFormRect: DOMRect = this.gameFormRef.current.getBoundingClientRect();
-      console.log('LE RECT %s', JSON.stringify(gameFormRect));
-      this.configStyle = {
-        top: (gameFormRect.top + 70) + 'px',
-        left: (gameFormRect.right /*- configPanelSize.width*/) + 'px'
-      }
-    }
+    this.positionConfig();
   }
 
   componentWillUnmount(): void {
@@ -76,9 +69,13 @@ export default class GameForm extends React.Component<Props, State> {
             OnBoom={this.onBoom}
           />
         </div>
+        {/* <div className={`box ${isBoxVisible ? "" : "hidden"`}}> */}
 
-        <div id="divConfigPanel" style={this.configStyle}>
-          <GameConfig></GameConfig>
+        <div id="divConfigPanel" ref={this.configPanelRef} className={this.getConfigClass()} >
+          <GameConfig
+            gameOption={this.props.gameOption}
+            OnChange={this.optionChanged}
+          />
         </div>
       </div>
     );
@@ -114,7 +111,55 @@ export default class GameForm extends React.Component<Props, State> {
   }
 
   private toggleConfig = (): void => {
-    console.log('toggle-config-tabbb');
+    this.setState(prevState => {
+      return {
+        configVis: !prevState.configVis
+      }
+    });
   }
-  
+
+  private optionChanged(go: GameOption): void {
+
+  }
+
+  // helpers
+
+  private getConfigClass(): string {
+    let rv = 'divConfigPanel';
+
+    if (this.state.configVis) {
+      rv += ' open';
+    }
+    else {
+      rv += ' close';
+    }
+
+    return rv;
+  }
+
+
+  // private code
+
+  private positionConfig(): void {
+    if (this.gameFormRef.current && this.configPanelRef.current) {
+      const gameFormRect: DOMRect = this.gameFormRef.current.getBoundingClientRect();
+      const configPanelRect: DOMRect = this.configPanelRef.current.getBoundingClientRect();
+      
+      this.configPanelRef.current.style.setProperty('top', (gameFormRect.top + 30) + 'px');
+      this.configPanelRef.current.style.setProperty('left', (gameFormRect.right - configPanelRect.width) + 'px');
+      setTimeout(() => {
+        this.configPanelRef.current && this.configPanelRef.current.style.setProperty('visibility', 'visible')
+      }, 1000)
+      //this.configPanelRef.current.style.setProperty(' visibility', 'visible');
+      // this.setState(prevState => {
+      //   return {
+      //     configStyle: {
+      //       top: (gameFormRect.top + 30) + 'px',
+      //       left: (gameFormRect.right - configPanelRect.width) + 'px',
+      //     },
+      //   }
+      // });
+
+    }
+  }
 } // component

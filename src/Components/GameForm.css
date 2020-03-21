@@ -14,3 +14,48 @@
   border-radius: 5px;
   z-index: 2000;
 }
+
+.divConfigPanel {
+  position: absolute;
+  border: 3px solid black;
+  border-left: none;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  background-color: #a3a3a3;
+  width: 115px;
+  height: 200px;
+  z-index: 1000;
+  visibility: hidden;
+}
+
+.open {
+  transform-origin: 100% 50%;
+  animation: openAnimation 320ms both ease-in;
+}
+
+.close {
+  transform-origin: 100% 50%;
+  animation: closeAnimation 220ms both ease-in;
+}
+
+@keyframes openAnimation {
+  0% {
+   transform: translateX(0px);
+   background-color: white;
+  }
+  100% {
+    transform: translateX(115px);
+    background-color: #c0c0c0;
+  }
+}
+
+@keyframes closeAnimation {
+  0% {
+    transform: translateX(115px);
+    background-color: #c0c0c0;
+  }
+  100% {
+    transform: translateX(0px);
+    background-color: white;
+  }
+}
