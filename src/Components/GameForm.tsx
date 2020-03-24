@@ -17,7 +17,7 @@ type State = {
   running: boolean,
   flagCount: number,
   restart: boolean,
-  configVis: boolean;
+  animClass: string;
 };
 
 export default class GameForm extends React.Component<Props, State> {
@@ -33,7 +33,7 @@ export default class GameForm extends React.Component<Props, State> {
       running: false,
       flagCount: 0,
       restart: false,
-      configVis: false,
+      animClass: ''
     };
 
     this.gameFormRef = React.createRef();
@@ -111,10 +111,16 @@ export default class GameForm extends React.Component<Props, State> {
   }
 
   private toggleConfig = (): void => {
-    this.setState(prevState => {
-      return {
-        configVis: !prevState.configVis
-      }
+    let newAnimClass = '';
+    if (this.state.animClass === '' || this.state.animClass == 'close') {
+      newAnimClass = 'open'
+    }
+    else {
+      newAnimClass = 'close';
+    }
+
+    this.setState({
+      animClass: newAnimClass
     });
   }
 
@@ -127,16 +133,10 @@ export default class GameForm extends React.Component<Props, State> {
   private getConfigClass(): string {
     let rv = 'divConfigPanel';
 
-    if (this.state.configVis) {
-      rv += ' open';
-    }
-    else {
-      rv += ' close';
-    }
+    rv += ' ' + this.state.animClass;
 
     return rv;
   }
-
 
   // private code
 
@@ -147,19 +147,8 @@ export default class GameForm extends React.Component<Props, State> {
       
       this.configPanelRef.current.style.setProperty('top', (gameFormRect.top + 30) + 'px');
       this.configPanelRef.current.style.setProperty('left', (gameFormRect.right - configPanelRect.width) + 'px');
-      setTimeout(() => {
-        this.configPanelRef.current && this.configPanelRef.current.style.setProperty('visibility', 'visible')
-      }, 1000)
-      //this.configPanelRef.current.style.setProperty(' visibility', 'visible');
-      // this.setState(prevState => {
-      //   return {
-      //     configStyle: {
-      //       top: (gameFormRect.top + 30) + 'px',
-      //       left: (gameFormRect.right - configPanelRect.width) + 'px',
-      //     },
-      //   }
-      // });
-
+      this.configPanelRef.current.style.setProperty('visibility', 'visible')
     }
   }
+
 } // component
