@@ -96,8 +96,8 @@ export default class GameConfig extends React.Component<Props, State> {
     this.setState({
       gameOption: go
     });
-
-    console.log('le from -> %s,  val -> %s', from, e.target.value);
+    
+    this.props.OnChange(go);
   }
 
   // helpers

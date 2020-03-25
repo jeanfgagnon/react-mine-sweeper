@@ -18,6 +18,7 @@ type State = {
   flagCount: number,
   restart: boolean,
   animClass: string;
+  gameOption: GameOption;
 };
 
 export default class GameForm extends React.Component<Props, State> {
@@ -33,7 +34,8 @@ export default class GameForm extends React.Component<Props, State> {
       running: false,
       flagCount: 0,
       restart: false,
-      animClass: ''
+      animClass: '',
+      gameOption: Object.assign({}, this.props.gameOption)
     };
 
     this.gameFormRef = React.createRef();
@@ -52,7 +54,7 @@ export default class GameForm extends React.Component<Props, State> {
       <div>
         <div id='divGameForm' ref={this.gameFormRef} style={{ width: (this.props.gameOption.NbCol * 27 + 10) }}>
           <GameHeader
-            gameOption={this.props.gameOption}
+            gameOption={this.state.gameOption}
             running={this.state.running}
             gameOver={this.state.gameOver}
             OnTimeout={this.stopGame}
@@ -61,7 +63,7 @@ export default class GameForm extends React.Component<Props, State> {
             flagCount={this.state.flagCount}
           />
           <GameBoard
-            gameOption={this.props.gameOption}
+            gameOption={this.state.gameOption}
             SetFlagCount={this.setFlagCount}
             gameOver={this.state.gameOver}
             OnFirstClick={this.startGame}
@@ -71,7 +73,7 @@ export default class GameForm extends React.Component<Props, State> {
         </div>
         {/* <div className={`box ${isBoxVisible ? "" : "hidden"`}}> */}
 
-        <div id="divConfigPanel" ref={this.configPanelRef} className={this.getConfigClass()} >
+        <div id="divConfigPanel" ref={this.configPanelRef} className={this.state.animClass} >
           <GameConfig
             gameOption={this.props.gameOption}
             OnChange={this.optionChanged}
@@ -112,7 +114,7 @@ export default class GameForm extends React.Component<Props, State> {
 
   private toggleConfig = (): void => {
     let newAnimClass = '';
-    if (this.state.animClass === '' || this.state.animClass == 'close') {
+    if (this.state.animClass === '' || this.state.animClass === 'close') {
       newAnimClass = 'open'
     }
     else {
@@ -124,19 +126,14 @@ export default class GameForm extends React.Component<Props, State> {
     });
   }
 
-  private optionChanged(go: GameOption): void {
-
+  private optionChanged = (go: GameOption): void => {
+    this.setState({ 
+      gameOption: go,
+      restart: true
+    });
   }
 
   // helpers
-
-  private getConfigClass(): string {
-    let rv = 'divConfigPanel';
-
-    rv += ' ' + this.state.animClass;
-
-    return rv;
-  }
 
   // private code
 
@@ -147,7 +144,7 @@ export default class GameForm extends React.Component<Props, State> {
       
       this.configPanelRef.current.style.setProperty('top', (gameFormRect.top + 30) + 'px');
       this.configPanelRef.current.style.setProperty('left', (gameFormRect.right - configPanelRect.width) + 'px');
-      this.configPanelRef.current.style.setProperty('visibility', 'visible')
+      this.configPanelRef.current.style.setProperty('visibility', 'visible');
     }
   }
 

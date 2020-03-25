@@ -37,6 +37,7 @@ export default class GameBoard extends React.Component<Props, State> {
   }
 
   render() {
+    this.initBoard();
     return (
       <div id="game-board">
         <div className='game-grid'>
@@ -63,9 +64,12 @@ export default class GameBoard extends React.Component<Props, State> {
   }
 
   componentDidUpdate() {
-    if (this.props.restart && this.state.running) {
-      this.initBoard();
-      this.setState({ running: false });
+    this.initBoard();
+    if (this.props.restart) {
+      console.log('initboard clisss');
+      if (this.state.running) {
+        //this.setState({ running: false });
+      }
     }
   }
 
@@ -158,7 +162,7 @@ export default class GameBoard extends React.Component<Props, State> {
         const aziCoords: CellCoords = this.getAziCoords(coords, aziStr);
         if (aziCoords.valid) {
           const aziPos = this.getBoardPos(aziCoords);
-          if (!this.board[aziPos].IsCleared) {
+          if (!this.board[aziPos].IsCleared && !this.board[aziPos].IsRedFlagVisible) {
             this.clearEmptyAround(aziCoords);
           }
         }
