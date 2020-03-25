@@ -37,7 +37,7 @@ export default class GameBoard extends React.Component<Props, State> {
   }
 
   render() {
-    this.initBoard();
+   // this.initBoard();
     return (
       <div id="game-board">
         <div className='game-grid'>
@@ -64,11 +64,10 @@ export default class GameBoard extends React.Component<Props, State> {
   }
 
   componentDidUpdate() {
-    this.initBoard();
     if (this.props.restart) {
-      console.log('initboard clisss');
+      this.initBoard();
       if (this.state.running) {
-        //this.setState({ running: false });
+        this.setState({ running: false });
       }
     }
   }
