@@ -7,6 +7,7 @@ import GameConfig from './GameConfig';
 import './GameForm.css';
 
 import GameOption from '../Common/GameOption';
+import CellModel from '../Common/CellModel';
 
 type Props = {
   gameOption: GameOption
@@ -24,7 +25,7 @@ type State = {
 export default class GameForm extends React.Component<Props, State> {
   private gameFormRef: React.RefObject<HTMLDivElement>;
   private configPanelRef: React.RefObject<HTMLDivElement>;
-
+  private board: CellModel[] = [];
   // life cycle plumbing
 
   constructor(props: Props) {
@@ -37,6 +38,8 @@ export default class GameForm extends React.Component<Props, State> {
       animClass: '',
       gameOption: Object.assign({}, this.props.gameOption)
     };
+
+    this.initBoard(this.props.gameOption.NbRow, this.props.gameOption.NbCol);
 
     this.gameFormRef = React.createRef();
     this.configPanelRef = React.createRef();
@@ -52,7 +55,7 @@ export default class GameForm extends React.Component<Props, State> {
   render() {
     return (
       <div>
-        <div id='divGameForm' ref={this.gameFormRef} style={{ width: (this.props.gameOption.NbCol * 27 + 10) }}>
+        <div id='divGameForm' ref={this.gameFormRef} style={{ width: (this.state.gameOption.NbCol * 27 + 10) }}>
           <GameHeader
             gameOption={this.state.gameOption}
             running={this.state.running}
@@ -69,9 +72,9 @@ export default class GameForm extends React.Component<Props, State> {
             OnFirstClick={this.startGame}
             restart={this.state.restart}
             OnBoom={this.onBoom}
+            board={this.board}
           />
         </div>
-        {/* <div className={`box ${isBoxVisible ? "" : "hidden"`}}> */}
 
         <div id="divConfigPanel" ref={this.configPanelRef} className={this.state.animClass} >
           <GameConfig
@@ -104,6 +107,7 @@ export default class GameForm extends React.Component<Props, State> {
   }
 
   private restartGame = (): void => {
+    this.initBoard(this.state.gameOption.NbRow, this.state.gameOption.NbCol);
     this.setState({
       gameOver: false,
       running: false,
@@ -127,9 +131,12 @@ export default class GameForm extends React.Component<Props, State> {
   }
 
   private optionChanged = (go: GameOption): void => {
-    this.setState({ 
+    this.initBoard(go.NbRow, go.NbCol);
+    this.setState({
       gameOption: go,
-      restart: true
+      restart: true,
+      running: false, 
+      gameOver: false
     });
   }
 
@@ -137,11 +144,39 @@ export default class GameForm extends React.Component<Props, State> {
 
   // private code
 
+  // create board cells
+  private initBoard(nbRow: number, nbCol: number): void {
+    this.board = [];
+    let index = 0;
+    for (let rowNo = 0; rowNo < nbRow; rowNo++) {
+      for (let colNo = 0; colNo < nbCol; colNo++) {
+        const cell = this.createCellModel(index, rowNo, colNo);
+        this.board.push(cell);
+        index++;
+      }
+    }
+  } // initBoard
+
+  // create and initialize one board cell
+  private createCellModel(index: number, rowNo: number, colNo: number): CellModel {
+    const cell = new CellModel();
+
+    cell.CellId = `cell_${rowNo + 1}_${colNo + 1}`;
+    cell.CellNo = index;
+    cell.IsRedFlagVisible = false;
+    cell.IsBomb = false;
+    cell.IsCleared = false;
+    cell.Text = '';
+    cell.CssClass = 'cellUnclick'
+
+    return cell;
+  } // createCellModel
+
   private positionConfig(): void {
     if (this.gameFormRef.current && this.configPanelRef.current) {
       const gameFormRect: DOMRect = this.gameFormRef.current.getBoundingClientRect();
       const configPanelRect: DOMRect = this.configPanelRef.current.getBoundingClientRect();
-      
+
       this.configPanelRef.current.style.setProperty('top', (gameFormRect.top + 30) + 'px');
       this.configPanelRef.current.style.setProperty('left', (gameFormRect.right - configPanelRect.width) + 'px');
       this.configPanelRef.current.style.setProperty('visibility', 'visible');

@@ -14,7 +14,8 @@ type Props = {
   SetFlagCount: (nb: number) => void;
   OnBoom: () => void,
   restart: boolean,
-  gameOver: boolean
+  gameOver: boolean,
+  board: CellModel[]
 };
 
 type State = {
@@ -31,13 +32,10 @@ export default class GameBoard extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    this.initBoard();
     this.state = { board: this.board, running: false };
-    //this.onCellClicked = this.onCellClicked.bind(this);
   }
 
   render() {
-   // this.initBoard();
     return (
       <div id="game-board">
         <div className='game-grid'>
@@ -65,7 +63,7 @@ export default class GameBoard extends React.Component<Props, State> {
 
   componentDidUpdate() {
     if (this.props.restart) {
-      this.initBoard();
+      //this.initBoard();
       if (this.state.running) {
         this.setState({ running: false });
       }
@@ -82,38 +80,39 @@ export default class GameBoard extends React.Component<Props, State> {
         this.bombSetup(index);
       }
 
-      if (!this.board[index].IsRedFlagVisible) {
-        if (this.board[index].IsBomb) {
+      if (!this.props.board[index].IsRedFlagVisible) {
+        if (this.props.board[index].IsBomb) {
           // boom
           console.log('boom!');
           this.boom(index);
+          this.setState({ running: false });
         }
         else {
-          this.board[index].IsRedFlagVisible = false;
-          this.board[index].CssClass = "empty-cell";
-          this.board[index].IsCleared = true;
-          const coords = this.getCellCoord(this.board[index].CellNo);
+          this.props.board[index].IsRedFlagVisible = false;
+          this.props.board[index].CssClass = "empty-cell";
+          this.props.board[index].IsCleared = true;
+          const coords = this.getCellCoord(this.props.board[index].CellNo);
           const nearBombCount = this.getNearBombCount(coords);
           if (nearBombCount > 0) {
-            this.board[index].Text = nearBombCount.toString();
-            this.board[index].CellStyle = this.getStyleColorByNbBomb(nearBombCount);
+            this.props.board[index].Text = nearBombCount.toString();
+            this.props.board[index].CellStyle = this.getStyleColorByNbBomb(nearBombCount);
           }
           else {
             this.clearEmptyAround(coords);
           }
-          this.setState({ board: this.board });
+          this.setState({ board: this.props.board });
         }
       }
     }
   }
 
   onCellRightClicked = (e: Event, index: number) => {
-    const cellModel = this.board[index];
+    const cellModel = this.props.board[index];
     if (this.state.running && !this.props.gameOver && !cellModel.IsCleared) {
       cellModel.IsRedFlagVisible = !cellModel.IsRedFlagVisible;
-      this.board[index] = JSON.parse(JSON.stringify(cellModel));
-      this.setState({ board: this.board });
-      const nb = this.board.filter(x => x.IsRedFlagVisible).length;
+      this.props.board[index] = JSON.parse(JSON.stringify(cellModel));
+      this.setState({ board: this.props.board });
+      const nb = this.props.board.filter(x => x.IsRedFlagVisible).length;
       this.props.SetFlagCount(nb);
     }
   }
@@ -123,7 +122,7 @@ export default class GameBoard extends React.Component<Props, State> {
   // return cell based on coordinates
   private getCell(rowNo: number, colNo: number): CellModel {
     const index = (rowNo * this.props.gameOption.NbCol) + colNo;
-    return this.board[index];
+    return this.props.board[index];
   }
 
   // private code
@@ -138,7 +137,7 @@ export default class GameBoard extends React.Component<Props, State> {
     let nbBomb = 0;
     const surroundingBoardPos: number[] = this.computeSurroundingBoardPos(coords);
     surroundingBoardPos.forEach(n => {
-      if (this.board[n].IsBomb) {
+      if (this.props.board[n].IsBomb) {
         nbBomb++;
       }
     });
@@ -149,19 +148,19 @@ export default class GameBoard extends React.Component<Props, State> {
   // clean around 'coords' up to cells with near bomb(s)
   private clearEmptyAround(coords: CellCoords): void {
     const pos = this.getBoardPos(coords);
-    this.board[pos].IsCleared = true;
-    this.board[pos].CssClass = "empty-cell";
+    this.props.board[pos].IsCleared = true;
+    this.props.board[pos].CssClass = "empty-cell";
     const nearBombCount = this.getNearBombCount(coords);
     if (nearBombCount > 0) {
-      this.board[pos].Text = nearBombCount.toString();
-      this.board[pos].CellStyle = this.getStyleColorByNbBomb(nearBombCount);
+      this.props.board[pos].Text = nearBombCount.toString();
+      this.props.board[pos].CellStyle = this.getStyleColorByNbBomb(nearBombCount);
     }
     else {
       this.azimuth.forEach(aziStr => {
         const aziCoords: CellCoords = this.getAziCoords(coords, aziStr);
         if (aziCoords.valid) {
           const aziPos = this.getBoardPos(aziCoords);
-          if (!this.board[aziPos].IsCleared && !this.board[aziPos].IsRedFlagVisible) {
+          if (!this.props.board[aziPos].IsCleared && !this.props.board[aziPos].IsRedFlagVisible) {
             this.clearEmptyAround(aziCoords);
           }
         }
@@ -179,15 +178,15 @@ export default class GameBoard extends React.Component<Props, State> {
 
       if (aziCoords.valid) {
         const curPos = this.getBoardPos(aziCoords);
-        if (this.board[curPos].IsBomb) {
-          this.board[curPos].IsBomb = false;
+        if (this.props.board[curPos].IsBomb) {
+          this.props.board[curPos].IsBomb = false;
 
           let pos = this.getRandomPos();
-          while (pos === firstClickedCellNo || surroundingBoardPos.indexOf(pos) !== -1 || this.board[pos].IsBomb) {
+          while (pos === firstClickedCellNo || surroundingBoardPos.indexOf(pos) !== -1 || this.props.board[pos].IsBomb) {
             pos = this.getRandomPos();
             console.log('moving bomb from %s %s to %s', aziStr, curPos, pos);
           }
-          this.board[pos].IsBomb = true;
+          this.props.board[pos].IsBomb = true;
         }
       }
 
@@ -267,22 +266,22 @@ export default class GameBoard extends React.Component<Props, State> {
   }
 
   boom(currentCellNo: number): void {
-    let nb = this.board.filter(x => x.IsRedFlagVisible).length;
+    let nb = this.props.board.filter(x => x.IsRedFlagVisible).length;
 
-    for (let i = 0; i < this.board.length; i++) {
-      if (this.board[i].IsBomb) {
+    for (let i = 0; i < this.props.board.length; i++) {
+      if (this.props.board[i].IsBomb) {
         if (i === currentCellNo) {
-          this.board[i].CssClass = "cellBombCur";
+          this.props.board[i].CssClass = "cellBombCur";
         }
         else {
-          if (!this.board[i].IsRedFlagVisible) {
-            this.board[i].CssClass = "cellBomb";
+          if (!this.props.board[i].IsRedFlagVisible) {
+            this.props.board[i].CssClass = "cellBomb";
           }
         }
       }
-      else if (this.board[i].IsRedFlagVisible) {
-        this.board[i].IsRedFlagVisible = false;
-        this.board[i].CssClass = "badCellBomb";
+      else if (this.props.board[i].IsRedFlagVisible) {
+        this.props.board[i].IsRedFlagVisible = false;
+        this.props.board[i].CssClass = "badCellBomb";
         nb--;
       }
     }
@@ -310,13 +309,13 @@ export default class GameBoard extends React.Component<Props, State> {
 
   // add the required bombs anywhere randomly on the board
   setBombs(firstClickedCellNo: number): void {
-    if (this.props.gameOption.NbBomb < this.board.length) {
+    if (this.props.gameOption.NbBomb < this.props.board.length) {
       for (let i = 0; i < this.props.gameOption.NbBomb; i++) {
         let pos = this.getRandomPos();
-        while (pos === firstClickedCellNo || this.board[pos].IsBomb) {
+        while (pos === firstClickedCellNo || this.props.board[pos].IsBomb) {
           pos = this.getRandomPos();
         }
-        this.board[pos].IsBomb = true;
+        this.props.board[pos].IsBomb = true;
       }
     }
   }
@@ -352,37 +351,9 @@ export default class GameBoard extends React.Component<Props, State> {
     return rv;
   }
 
-  // create board cells
-  private initBoard(): void {
-    this.board = [];
-    let index = 0;
-    for (let rowNo = 0; rowNo < this.props.gameOption.NbRow; rowNo++) {
-      for (let colNo = 0; colNo < this.props.gameOption.NbCol; colNo++) {
-        const cell = this.createCellModel(index, rowNo, colNo);
-        this.board.push(cell);
-        index++;
-      }
-    }
-  } // initBoard
-
-  // create and initialize one board cell
-  private createCellModel(index: number, rowNo: number, colNo: number): CellModel {
-    const cell = new CellModel();
-
-    cell.CellId = `cell_${rowNo + 1}_${colNo + 1}`;
-    cell.CellNo = index;
-    cell.IsRedFlagVisible = false;
-    cell.IsBomb = false;
-    cell.IsCleared = false;
-    cell.Text = '';
-    cell.CssClass = 'cellUnclick'
-
-    return cell;
-  } // createCellModel
-
   // return a random where n >= 0 && n < board size
   private getRandomPos(): number {
-    const rnd = Math.floor(Math.random() * this.board.length);
+    const rnd = Math.floor(Math.random() * this.props.board.length);
 
     return rnd;
   }
