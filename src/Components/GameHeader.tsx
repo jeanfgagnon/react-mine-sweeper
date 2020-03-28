@@ -5,7 +5,6 @@ import './GameHeader.css';
 
 import smiley from '../Assets/smiley-smile.png';
 import smileySad from '../Assets/smiley-sad.png';
-//import gear from '../Assets/gear.png';
 
 type Props = {
   gameOption: GameOption,
@@ -19,7 +18,6 @@ type Props = {
 
 
 export default class GameHeader extends React.Component<Props> {
-  private timerHandler: any = 0;
 
   // life cycle plumbing
 
@@ -39,7 +37,10 @@ export default class GameHeader extends React.Component<Props> {
         </div>
 
         <div className="container">
-          <div className="start-pos"><div className="digit-box">{this.padNum(this.props.gameOption.NbBomb - this.props.flagCount)}</div></div>
+          <div className="start-pos">
+            <div className="digit-box">{this.padNum(this.props.gameOption.NbBomb - this.props.flagCount)}</div>
+            <span className='game-over'>{this.gameStatus()}</span>
+          </div>
           <div>
             <div className='smiley-button' title='Restart game' onClick={this.restart}>{this.getSmileyEL()}</div>
           </div>
@@ -52,18 +53,33 @@ export default class GameHeader extends React.Component<Props> {
 
   // event handlers
 
+  // clanche direct la props?
   private gearClicked = (): void => { 
     this.props.OnToggleConfig();
   }
   
   // Start another game (and possibly abort current one) 
 
-  // clache direct la props?
+  // clanche direct la props?
   private restart = (): void => {
     this.props.OnRestart();
   }
 
   // helpers
+
+  private gameStatus = () : string => {
+    let rv = '';
+    if (this.props.gameOver) {
+      if (this.props.elapsed >= this.props.gameOption.MaxSec) {
+        rv = 'TIMEOUT!';
+      }
+      else {
+        rv = 'BOOM!';
+      }
+    }
+
+    return rv;
+  }
 
   // private code
 

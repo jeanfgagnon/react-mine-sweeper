@@ -42,6 +42,7 @@
   justify-content: center;
   margin-right: 20px;
   margin-left: 20px;
+  display: inline-block;
 }
 
 .smiley-button {
@@ -70,4 +71,11 @@
 
 .end-pos {
   justify-self: end;
+}
+
+.game-over {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: 13pt;
+  color: red;
+  font-weight: bold;
 }

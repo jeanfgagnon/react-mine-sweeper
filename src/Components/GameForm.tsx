@@ -124,7 +124,8 @@ export default class GameForm extends React.Component<Props, State> {
   private stopGame = (): void => {
     clearInterval(this.timerHandler);
     this.setState({ 
-      running: false 
+      running: false,
+      gameOver: true
     });
   }
 
@@ -288,7 +289,6 @@ export default class GameForm extends React.Component<Props, State> {
     }
   }
 
-  // Game logic move from board in v1
   // set bombs on board on first click
   bombSetup(firstClickedCellNo: number): void {
     this.setBombs(firstClickedCellNo);
