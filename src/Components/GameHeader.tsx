@@ -12,26 +12,16 @@ type Props = {
   running: boolean,
   gameOver: boolean,
   flagCount: number,
-  OnTimeout: () => void,
+  elapsed: number,
   OnRestart: () => void,
-  OnConfig: () => void
+  OnToggleConfig: () => void
 };
 
-type State = {
-  elapsed: number;
-};
 
-export default class GameHeader extends React.Component<Props, State> {
+export default class GameHeader extends React.Component<Props> {
   private timerHandler: any = 0;
 
   // life cycle plumbing
-
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      elapsed: 0
-    }
-  }
 
   render() {
     return (
@@ -53,65 +43,29 @@ export default class GameHeader extends React.Component<Props, State> {
           <div>
             <div className='smiley-button' title='Restart game' onClick={this.restart}>{this.getSmileyEL()}</div>
           </div>
-          <div className="end-pos"><div className="digit-box">{this.padNum(this.state.elapsed)}</div></div>
+          <div className="end-pos"><div className="digit-box">{this.padNum(this.props.elapsed)}</div></div>
         </div>
 
       </div>
     );
   }
 
-  componentDidMount() {
-    this.checkTimer();
-  }
-
-  componentDidUpdate() {
-    this.checkTimer();
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.timerHandler);
-  }
-
   // event handlers
 
   private gearClicked = (): void => { 
-    this.props.OnConfig();
+    this.props.OnToggleConfig();
   }
   
-  // Start another game (and possibly abort current one)
+  // Start another game (and possibly abort current one) 
+
+  // clache direct la props?
   private restart = (): void => {
-    clearInterval(this.timerHandler);
-    this.timerHandler = 0;
-    this.setState({ elapsed: 0 });
     this.props.OnRestart();
   }
 
   // helpers
 
   // private code
-
-  private checkTimer(): void {
-    if (this.props.running) {
-      if (this.timerHandler === 0) {
-        this.timerHandler = setInterval(() => { this.incrementElapsed() }, 1000);
-      }
-    }
-    else {
-      clearInterval(this.timerHandler);
-    }
-  }
-
-  incrementElapsed(): void {
-    if (this.state.elapsed < this.props.gameOption.MaxSec) {
-      this.setState(prevState => {
-        return { elapsed: prevState.elapsed + 1 };
-      });
-    }
-    else {
-      // clearInterval(this.timerHandler); shoul be cleared after parent state's change
-      this.props.OnTimeout();
-    }
-  }
 
   private getSmileyEL = (): ReactElement => {
     if (this.props.gameOver) {

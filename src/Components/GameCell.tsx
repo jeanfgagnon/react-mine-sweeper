@@ -8,8 +8,7 @@ import flagImage from "../Assets/flag-cell.png";
 
 type Props = {
   cellModel: CellModel;
-  OnClick: (e: Event, index: number) => void;  
-  OnRightClick: (e: Event, index: number) => void;  
+  OnClick: (index: number, isRightClick: boolean) => void;  
 };
 
 export default class GameCell extends Component<Props> {
@@ -31,19 +30,11 @@ export default class GameCell extends Component<Props> {
     );
   }
 
-  componentDidUpdate() {
-  }
-
   // event handlers
 
   handleClick(e: MouseEvent<HTMLElement>): void {
     e.preventDefault();
-    if (e.type === 'click') {
-      this.props.OnClick(e.nativeEvent, this.props.cellModel.CellNo);
-    }
-    else { 
-      this.props.OnRightClick(e.nativeEvent, this.props.cellModel.CellNo);
-    }
+    this.props.OnClick(this.props.cellModel.CellNo, e.type !== 'click');
   }
 
   // helpers
@@ -52,6 +43,8 @@ export default class GameCell extends Component<Props> {
     if (this.props.cellModel.IsRedFlagVisible) {
       return <img src={flagImage} className='flag-img' alt='Flag' />
     }
-    return <span>{this.props.cellModel.Text}</span>
+    else {
+      return <span>{this.props.cellModel.Text}</span>
+    }
   }
 }
