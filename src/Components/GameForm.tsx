@@ -78,7 +78,7 @@ export default class GameForm extends React.Component<Props, State> {
             OnChange={this.optionChanged}
           />
         </div>
-      </div>
+       </div>
     );
 
   } // render
